@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encouraging Cat</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffe8d6;
+            color: #6d4c41;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        h1 {
+            color: #b06f41;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .cat-container {
+            margin: 20px auto;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .cat-container:hover {
+            transform: scale(1.02);
+        }
+
+        .cat-container:active {
+            transform: scale(0.98);
+        }
+
+        .cat-image {
+            max-width: 50%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-box {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-height: 100px;
+            width: 80%;
+            max-width: 800px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .message {
+            font-size: 1.5rem;
+            color: #5d4037;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        footer {
+            margin-top: 40px;
+            color: #8d6e63;
+            font-size: 0.9rem;
+            padding: 20px;
+        }
+
+        /* Animation for background color shift */
+        @keyframes warm-glow {
+            0% { background-color: #ffe8d6; }
+            50% { background-color: #ffdab9; }
+            100% { background-color: #ffe8d6; }
+        }
+
+        .warm-glow {
+            animation: warm-glow 4s ease infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Click the Cat for Encouragement</h1>
+        
+        <div class="cat-container" id="catImage">
+            <img src="avatar.jpeg" alt="Encouraging Cat" class="cat-image">
+        </div>
+        
+        <div class="message-box">
+            <p class="message" id="messageText">Click the cat to receive an encouraging message!</p>
+        </div>
+    </div>
+    
+    <footer>
+        <p>A daily dose of feline motivation for entrepreneurs</p>
+    </footer>
+
+    <script>
+        // Array of encouraging messages in English
+        const englishMessages = [
+            "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+            "The only limit to our realization of tomorrow is our doubts of today.",
+            "The best way to predict the future is to create it.",
+            "Don't watch the clock; do what it does. Keep going.",
+            "The harder you work for something, the greater you'll feel when you achieve it.",
+            "Your passion is waiting for your courage to catch up.",
+            "Don't be afraid to give up the good to go for the great.",
+            "Opportunities don't happen. You create them.",
+            "Dream big and dare to fail.",
+            "The secret of getting ahead is getting started.",
+            "Every problem is a gift—without problems we would not grow.",
+            "Success is walking from failure to failure with no loss of enthusiasm.",
+            "The road to success and the road to failure are almost exactly the same.",
+            "Timing, perseverance, and ten years of trying will eventually make you look like an overnight success.",
+            "What would you do if you weren't afraid?"
+        ];
+
+        // Array of encouraging messages in French
+        const frenchMessages = [
+            "Le succès n'est pas définitif, l'échec n'est pas fatal : c'est le courage de continuer qui compte.",
+            "La seule limite à notre épanouissement de demain sera nos doutes d'aujourd'hui.",
+            "La meilleure façon de prédire l'avenir est de le créer.",
+            "Ne regardez pas l'horloge; faites ce qu'elle fait. Continuez.",
+            "Plus vous travaillez dur pour quelque chose, plus vous vous sentirez bien quand vous l'atteindrez.",
+            "Votre passion attend que votre courage la rattrape.",
+            "N'ayez pas peur d'abandonner le bien pour aller vers l'excellent.",
+            "Les opportunités ne se présentent pas. Vous les créez.",
+            "Rêvez grand et osez échouer.",
+            "Le secret pour avancer est de commencer.",
+            "Chaque problème est un cadeau—sans problèmes nous ne grandirions pas.",
+            "Le succès, c'est d'aller d'échec en échec sans perdre son enthousiasme.",
+            "La route du succès et la route de l'échec sont presque exactement les mêmes.",
+            "Le timing, la persévérance et dix ans d'essais finiront par vous faire paraître comme un succès du jour au lendemain.",
+            "Que feriez-vous si vous n'aviez pas peur?"
+        ];
+
+        // Combine both arrays for all messages
+        const allMessages = [...englishMessages, ...frenchMessages];
+
+        // Get DOM elements
+        const catImage = document.getElementById('catImage');
+        const messageText = document.getElementById('messageText');
+        const body = document.querySelector('body');
+
+        // Function to display a random message
+        function displayRandomMessage() {
+            // Get a random message
+            const randomIndex = Math.floor(Math.random() * allMessages.length);
+            const selectedMessage = allMessages[randomIndex];
+            
+            // Hide message first
+            messageText.classList.remove('show');
+            
+            // Add warm glow effect to the background
+            body.classList.add('warm-glow');
+            
+            // After a short delay, show the new message
+            setTimeout(() => {
+                messageText.textContent = selectedMessage;
+                messageText.classList.add('show');
+                
+                // Remove the warm glow effect after a few seconds
+                setTimeout(() => {
+                    body.classList.remove('warm-glow');
+                }, 3000);
+            }, 300);
+        }
+
+        // Add click event listener to the cat image
+        catImage.addEventListener('click', displayRandomMessage);
+    </script>
+</body>
+</html>
